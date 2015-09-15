@@ -1,6 +1,8 @@
 P     H     I     N     G
 =========================
 
+Read FORK.md explanation to know why this fork.
+
   Master: [![Build Status](https://travis-ci.org/phingofficial/phing.png?branch=master)](https://travis-ci.org/phingofficial/phing)
 
   (PH)ing (I)s (N)ot (G)NU make; it's a PHP project build system or build
