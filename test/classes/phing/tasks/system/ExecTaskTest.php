@@ -321,9 +321,11 @@ class ExecTaskTest extends BuildFileTest
 
     public function testCheckreturnTrue()
     {
-        if ($this->windows) {
-            $this->markTestSkipped("Windows does not have '/bin/true'");
+        // Validating the OS platform
+        if (!file_exists('/bin/true')) {
+            $this->markTestSkipped("OS does not have '/bin/true'");
         }
+
         $this->executeTarget(__FUNCTION__);
         $this->assertTrue(true);
     }
@@ -334,8 +336,8 @@ class ExecTaskTest extends BuildFileTest
      */
     public function testCheckreturnFalse()
     {
-        if ($this->windows) {
-            $this->markTestSkipped("Windows does not have '/bin/false'");
+        if (!file_exists('/bin/false')) {
+            $this->markTestSkipped("OS does not have '/bin/false'");
         }
         $this->executeTarget(__FUNCTION__);
     }
@@ -348,6 +350,9 @@ class ExecTaskTest extends BuildFileTest
 
     public function testReturnProperty()
     {
+        if (!file_exists('/bin/false')) {
+            $this->markTestSkipped("OS does not have '/bin/false'");
+        }        
         $this->executeTarget(__FUNCTION__);
         $this->assertInLogs('The return property\'s value is: "1"');
     }

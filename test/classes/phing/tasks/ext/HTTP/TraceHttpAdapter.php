@@ -19,7 +19,7 @@
  * <http://phing.info>.
  */
 
-require_once 'HTTP/Request2/Adapter/Mock.php';
+//require_once 'HTTP/Request2/Adapter/Mock.php';
 
 /**
  * A subclass of Mock adapter for HTTP_Request2 that also saves array representations of sent requests

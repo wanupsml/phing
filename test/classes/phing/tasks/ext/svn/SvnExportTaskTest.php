@@ -31,6 +31,7 @@ class SvnExportTaskTest extends AbstractSvnTaskTest
 {
     public function setUp()
     {
+        $this->markTestSkipped('Subversion skipped external dependencies');
         parent::setUp('SvnExportTest.xml', false);
     }
 

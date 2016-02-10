@@ -31,6 +31,7 @@ class SvnSwitchTaskTest extends BuildFileTest
 {
     public function setUp()
     {
+        $this->markTestSkipped('Subversion skipped external dependencies');
         if (is_readable(PHING_TEST_BASE . '/tmp/svn')) {
             // make sure we purge previously created directory
             // if left-overs from previous run are found
