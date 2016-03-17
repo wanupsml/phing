@@ -36,6 +36,7 @@ class PearPackageScannerTest extends BuildFileTest
 
     public function setUp()
     {
+        $this->markTestSkipped('Pear is not needed, we are using Composer.');
         if (defined('HHVM_VERSION')) {
             $this->markTestSkipped("PEAR tests do not run on HHVM");
         }

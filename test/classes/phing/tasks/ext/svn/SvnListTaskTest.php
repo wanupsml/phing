@@ -31,6 +31,7 @@ class SvnListTaskTest extends AbstractSvnTaskTest
 {
     public function setUp()
     {
+        $this->markTestSkipped('Subversion skipped external dependencies');
         parent::setUp('SvnListTest.xml');
         GitTestsHelper::rmdir(PHING_TEST_BASE . '/tmp/svn');
     }

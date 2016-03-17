@@ -40,6 +40,15 @@ class CopyTask extends Task
     protected $destFile = null; // the destiantion file (from xml attribute)
     protected $destDir = null; // the destination dir (from xml attribute)
     protected $overwrite = false; // overwrite destination (from xml attribute)
+
+    /**
+     * overwrite if origin is newer than destination, even if overwrite is false.
+     * Default to true to maintain current behaviour.
+     *
+     * @var bool
+     */
+    protected $overwriteDates = true;
+
     protected $preserveLMT = false; // sync timestamps (from xml attribute)
     protected $preservePermissions = true; // sync permissions (from xml attribute)
     protected $includeEmpty = true; // include empty dirs? (from XML)
@@ -84,6 +93,21 @@ class CopyTask extends Task
      * @return void
      */
     public function setOverwrite($bool)
+    {
+        $this->overwrite = (boolean) $bool;
+    }
+
+
+    /**
+     * Set the overwriteDates flag. IntrospectionHelper takes care of
+     * booleans in set* methods so we can assume that the right
+     * value (boolean primitive) is coming in here.
+     *
+     * @param  boolean $bool Overwrite the destination file(s) if it/they already exist
+     *
+     * @return void
+     */
+    public function setOverwriteDates($bool)
     {
         $this->overwrite = (boolean) $bool;
     }
@@ -303,7 +327,14 @@ class CopyTask extends Task
                 if ($this->destFile === null) {
                     $this->destFile = new PhingFile($this->destDir, (string) $this->file->getName());
                 }
-                if ($this->overwrite === true || ($this->file->lastModified() > $this->destFile->lastModified())) {
+                /**
+                 * if overwrite is true or
+                 * overwriteDates is true and origin is newer than destination, copy it.
+                 */
+                if (
+                    $this->overwrite === true ||
+                    ($this->overwriteDates && ($this->file->lastModified() > $this->destFile->lastModified()))
+                ){
                     $this->fileCopyMap[$this->file->getAbsolutePath()] = $this->destFile->getAbsolutePath();
                 } else {
                     $this->log($this->file->getName() . " omitted, is up to date");
