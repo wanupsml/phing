@@ -333,7 +333,7 @@ class CopyTask extends Task
                  */
                 if (
                     $this->overwrite === true ||
-                    ($this->overwriteDates && ($this->file->lastModified() > $this->destFile->lastModified()))
+                    ($this->overwriteDates === true && ($this->file->lastModified() > $this->destFile->lastModified()))
                 ){
                     $this->fileCopyMap[$this->file->getAbsolutePath()] = $this->destFile->getAbsolutePath();
                 } else {
