@@ -25,7 +25,7 @@
         "issues": "https://github.com/wanupsml/phing/issues"
     },
     "require": {
-        "php": "~5.5"
+        "php": ">=5.5"
     },
    "minimum-stability": "stable",
     "require-dev": {
