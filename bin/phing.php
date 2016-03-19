@@ -12,13 +12,21 @@
  * move test logic to test/bootstrap.php
  */
 if (is_readable('composer.json')) {
-	phing_load_composer_autoload_file('composer.json');
+	phing_composer::load_autoload_file('composer.json');
 } elseif (is_readable('../composer.json')) {
 	/**
 	 * handle autoloader if phing is executed under test folder!
 	 */
-	phing_load_composer_autoload_file('../composer.json');
+    phing_composer::load_autoload_file('../composer.json');
  }
+
+/**
+ * load always phing composer autoload last.
+ * If we don't do it, global installation of phing crash in
+ * projects that have phing dependencies.
+ */
+phing_composer::load_autoload_file(getenv('PHING_HOME') . '/composer.json');
+
 
 // Set any INI options for PHP
 // ---------------------------
@@ -80,27 +88,63 @@ try {
 
 }
 
-/**
- * load composer autoloader 
- * @param string $composerFile
- */
-function phing_load_composer_autoload_file($composerFile)
+class phing_composer
 {
-	$dir = realpath(dirname($composerFile));
-	$composer = json_decode(file_get_contents($composerFile), true);
-	if (is_array($composer) &&
-        isset($composer['config']['vendor-dir'])
-    ) {
-		$autoloadDir = $dir . '/' . $composer['config']['vendor-dir'];
-	} else {
-		$autoloadDir = $dir . '/vendor';
-	}
-	define ('PHING_COMPOSER_VENDOR_DIR', $autoloadDir);
+    /**
+     * @var array
+     */
+    static $autoloadFiles = [];
+    /**
+     * load composer autoloader
+     * @param string $composerFile
+     */
+    static function load_autoload_file($composerFile)
+    {
+        $dir = realpath(dirname($composerFile));
+        $composer = json_decode(file_get_contents($composerFile), true);
+        if (is_array($composer) &&
+            isset($composer['config']['vendor-dir'])
+        ) {
+            $autoloadDir = $dir . '/' . $composer['config']['vendor-dir'];
+        } else {
+            $autoloadDir = $dir . '/vendor';
+        }
 
-	$autoloadFile = $autoloadDir . '/autoload.php';
-	if (is_readable($autoloadFile)) {
-		require_once $autoloadFile;
-		define ('PHING_COMPOSER_AUTOLOAD_FILE', $autoloadFile);
-	}	
-} 
 
+
+        $autoloadFile = realpath($autoloadDir . '/autoload.php');
+
+        /**
+         * check if we loaded the same autoload file previously
+         * in projects with phing as dependence
+         */
+        if (isset(static::$autoloadFiles[$autoloadFile])) {
+            return;
+        }
+
+        if (is_readable($autoloadFile)) {
+            require_once $autoloadFile;
+
+            /**
+             * store loaded file, to prevent to load twice
+             * composer autoloader in projects with phing as
+             * dependence
+             */
+            static::$autoloadFiles[$autoloadFile] = true;
+
+            /**
+             * check if defined when we load two composer files,
+             * first project file
+             * second global phing composer
+             */
+            if (!defined('PHING_COMPOSER_VENDOR_DIR')) {
+                define('PHING_COMPOSER_VENDOR_DIR', $autoloadDir);
+            }
+
+            if (defined('PHING_COMPOSER_AUTOLOAD_FILE')) {
+                define('PHING_COMPOSER_AUTOLOAD_FILE', $autoloadFile);
+            }
+        }
+    }
+
+}
