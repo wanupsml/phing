@@ -65,6 +65,10 @@ class PhpLintTaskTest extends BuildFileTest
             $this->markTestSkipped("HHVM lint does not support testing for deprecated statements");
         }
 
+        if (version_compare(PHP_VERSION, '7.0', '>=')) {
+            $this->markTestSkipped("In PHP 7 it's not deprecated is a parse error: syntax error, unexpected 'new' (T_NEW)");
+        }
+
         file_put_contents(
             PHING_TEST_BASE . '/tmp/phplint_file.php',
             '<?php class TestClass {}; $t = & new TestClass();'
