@@ -109,7 +109,7 @@ class CopyTask extends Task
      */
     public function setOverwriteDates($bool)
     {
-        $this->overwrite = (boolean) $bool;
+        $this->overwriteDates = (boolean) $bool;
     }
 
     /**
