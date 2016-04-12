@@ -1,6 +1,6 @@
 {
     "name": "wanupsml/phing",
-    "version": "2.12.161502",
+    "version": "2.12.161503",
     "type": "project",
     "description": "Apache Ant port for PHP. Fork from phingofficial but with particular improvements. See FORK.md",
     "keywords": ["build", "tool", "task", "phing"],
