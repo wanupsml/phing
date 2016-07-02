@@ -64,6 +64,8 @@ class FtpDeployTask extends Task
     private $rawDataFallback = false;
     private $skipOnSameSize = false;
 
+    private $ignoreCreateError = false;
+    
     protected $logLevel = Project::MSG_VERBOSE;
 
     /**
@@ -73,6 +75,14 @@ class FtpDeployTask extends Task
     {
         $this->filesets = array();
         $this->completeDirMap = array();
+    }
+
+    /**
+     * 
+     * @param string $ignoreCreateError
+     */
+    function setIgnoreCreateError($ignoreCreateError) {
+        $this->ignoreCreateError =  (bool) $ignoreCreateError;
     }
 
     /**
@@ -301,7 +311,7 @@ class FtpDeployTask extends Task
 
         // Create directory just in case
         $ret = $ftp->mkdir($dir, true);
-        if (@PEAR::isError($ret)) {
+        if ($this->ignoreCreateError == false && @PEAR::isError($ret)) {
             $ftp->disconnect();
             throw new BuildException('Could not create directory ' . $dir . ': ' . $ret->getMessage());
         }
@@ -335,7 +345,7 @@ class FtpDeployTask extends Task
                 if (!$this->_directoryInformations($ftp, $remoteFileInformations, $dirname)) {
                     $this->log('Will create directory ' . $dirname, $this->logLevel);
                     $ret = $ftp->mkdir($dirname, true);
-                    if (@PEAR::isError($ret)) {
+                    if ($this->ignoreCreateError == false && @PEAR::isError($ret)) {
                         $ftp->disconnect();
                         throw new BuildException('Could not create directory ' . $dirname . ': ' . $ret->getMessage());
                     }
