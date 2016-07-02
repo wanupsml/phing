@@ -23,3 +23,4 @@ bin/phploc
 bin/phpmd
 bin/phpunit
 bin/validate-json
+/nbproject/private/
